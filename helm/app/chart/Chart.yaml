@@ -1,0 +1,9 @@
+apiVersion: v2
+name: app
+description: Helm chart template for an application, service, or micro-service.
+
+type: application
+
+version: "0.1.0"
+
+appVersion: "0.1.0"
