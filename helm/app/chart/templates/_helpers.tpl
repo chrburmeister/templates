@@ -35,7 +35,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Create the name of the service account to use
+Create the name of the service account
 */}}
 {{- define "app.serviceAccountName" -}}
 {{- printf "%s-%s" (include "app.name" .) "sa" }}
@@ -44,9 +44,7 @@ Create the name of the service account to use
 {{/*
 Create name for deployment
 */}}
-{{- define "app.deploymentName" -}}
-{{- printf "%s-%s" (include "app.name" .) "depl" }}
-{{- end }}
+# will stay "app.name" since its the "heart" of the deployment and the pods name depend on this.
 
 {{/*
 Create name for service
