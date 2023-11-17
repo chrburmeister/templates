@@ -7,14 +7,10 @@ image:
 
 imagePullSecrets: []
 
-replicaCount: 1
-
-
 serviceAccount:
   create: true
   automount: true
   annotations: {}
-  name: ""
 
 podAnnotations: {}
 podLabels: {}
@@ -22,17 +18,17 @@ podLabels: {}
 podSecurityContext: {}
   # fsGroup: 2000
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+securityContext:
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 101
 
 service:
   type: ClusterIP
-  port: 80
+  port: 8080
+  targetPort: 80
+  protocol: TCP
+  name: http
 
 ingress:
   enabled: true
@@ -49,17 +45,15 @@ ingress:
      hosts:
        - chart-example.local
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+replicaCount: 1
 
 autoscaling:
   enabled: true
