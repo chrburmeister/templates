@@ -1,11 +1,15 @@
-appName: "mail"
+appName: "application"
 
 image:
-  repository: nginx
+  repository: nginxinc/nginx-unprivileged
   pullPolicy: IfNotPresent
   tag: "latest"
 
 imagePullSecrets: []
+
+environment_variables:
+- name: ENVVARONE
+  value: valueone
 
 serviceAccount:
   create: true
@@ -15,10 +19,8 @@ serviceAccount:
 podAnnotations: {}
 podLabels: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
-
 securityContext:
+  allowPrivilegeEscalation: false
   readOnlyRootFilesystem: true
   runAsNonRoot: true
   runAsUser: 101
@@ -26,7 +28,7 @@ securityContext:
 service:
   type: ClusterIP
   port: 8080
-  targetPort: 80
+  targetPort: 8080
   protocol: TCP
   name: http
 
