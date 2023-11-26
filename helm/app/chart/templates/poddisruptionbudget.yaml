@@ -1,0 +1,17 @@
+{{- if .Values.PodDisruptionBudget.create -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "app.poddisruptionbudget" . }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.autoscaling.enabled }}
+  minAvailable: {{ .Values.autoscaling.minReplicas }}
+  {{- else }}
+  minAvailable: {{ .Values.PodDisruptionBudget.minAvailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "app.selectorLabels" . | nindent 6 }}
+{{- end }}

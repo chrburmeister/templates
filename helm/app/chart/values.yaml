@@ -5,6 +5,42 @@ image:
   pullPolicy: IfNotPresent
   tag: "latest"
 
+initContainers:
+- name: init-first
+  image: hello-world:latest
+  # command: ["echo 'HELLO!'"]
+  securityContext:
+    runAsUser: 101
+    runAsGroup: 30
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "250m"
+    limits:
+      memory: "128Mi"
+      cpu: "500m"
+- name: init-second
+  image: hello-world:latest
+  # command: ["echo 'HELLO!'"]
+  securityContext:
+    runAsUser: 101
+    runAsGroup: 30
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "250m"
+    limits:
+      memory: "128Mi"
+      cpu: "500m"
+
 imagePullSecrets: []
 
 environment_variables:
@@ -17,13 +53,41 @@ serviceAccount:
   annotations: {}
 
 podAnnotations: {}
+
 podLabels: {}
+
+PodDisruptionBudget:
+  create: true
+  minAvailable: 2  
+
+podSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 101
 
 securityContext:
   allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: true
+  readOnlyRootFilesystem: false
   runAsNonRoot: true
   runAsUser: 101
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
 
 service:
   type: ClusterIP
@@ -33,7 +97,7 @@ service:
   name: http
 
 ingress:
-  enabled: true
+  enabled: false
   className: "nginx"
   annotations:
     kubernetes.io/tls-acme: "true"
@@ -47,31 +111,21 @@ ingress:
      hosts:
        - chart-example.local
 
-resources:
-  limits:
-    cpu: 100m
-    memory: 128Mi
-  requests:
-    cpu: 100m
-    memory: 128Mi
-
 replicaCount: 1
 
 autoscaling:
   enabled: true
-  minReplicas: 1
-  maxReplicas: 100
+  minReplicas: 4
+  maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
 
-# Additional volumes on the output Deployment definition.
 volumes: []
 # - name: foo
 #   secret:
 #     secretName: mysecret
 #     optional: false
 
-# Additional volumeMounts on the output Deployment definition.
 volumeMounts: []
 # - name: foo
 #   mountPath: "/etc/foo"

@@ -42,6 +42,13 @@ Create the name of the service account
 {{- end }}
 
 {{/*
+Create the name of the pod disruption budget
+*/}}
+{{- define "app.poddisruptionbudget" -}}
+{{- printf "%s-%s" (include "app.name" .) "pdb" }}
+{{- end }}
+
+{{/*
 Create name for deployment
 */}}
 # will stay "app.name" since its the "heart" of the deployment and the pods name depend on this.
