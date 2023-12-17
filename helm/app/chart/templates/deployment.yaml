@@ -27,6 +27,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      restartPolicy: {{ .Values.restartPolicy }}
       serviceAccountName: {{ include "app.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.securityContext | nindent 8 }}
@@ -42,6 +43,29 @@ spec:
             - name:  {{ .Values.service.name }}
               containerPort: {{ .Values.service.targetPort }}
               protocol:  {{ .Values.service.protocol }}
+          env:
+            - name: RELEASE_NAME
+              value: {{ .Release.Name }}
+            - name: APP_VERSION
+              value: {{ .Chart.AppVersion | quote }}
+            {{- range $ref := .Values.environmentVariables.configMapKeyRefs }}
+            - name: {{ $ref.configMapName | upper }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ $ref.name }}
+                  key: {{ $ref.key }}
+            {{- end }}
+            {{- range $ref := .Values.environmentVariables.secretKeyRefs }}
+            - name: {{ $ref.secretName | upper }}
+              valueFrom:  
+                secretKeyRef:
+                  name: {{ $ref.name }}
+                  key: {{ $ref.key }}
+            {{- end }}
+            {{- range $ref := .Values.environmentVariables.directValues }}
+            - name: {{ $ref.name | upper }}
+              value: {{ $ref.value }}
+            {{- end }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:

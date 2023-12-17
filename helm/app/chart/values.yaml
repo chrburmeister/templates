@@ -5,6 +5,9 @@ image:
   pullPolicy: IfNotPresent
   tag: "latest"
 
+# Always, OnFailure, Never
+restartPolicy: Always
+
 initContainers:
 - name: init-first
   image: hello-world:latest
@@ -43,10 +46,6 @@ initContainers:
 
 imagePullSecrets: []
 
-environment_variables:
-- name: ENVVARONE
-  value: valueone
-
 serviceAccount:
   create: true
   automount: true
@@ -84,10 +83,30 @@ livenessProbe:
   httpGet:
     path: /
     port: http
+
 readinessProbe:
   httpGet:
     path: /
     port: http
+
+# all environment variable names are tranformed to upper case
+environmentVariables:
+  configMapKeyRefs: {}
+    # - name: NAME_OF_VARIABLE
+    #   configMapName: cm-01
+    #   key: NAME_OF_KEY
+    # - name: NAME_OF_VARIABLE123
+    #   configMapName: cm-01123
+    #   key: NAME_OF_KEY123
+  secretKeyRefs: {}
+    # - name: NAME_OF_VARIABLE
+    #   secretName: cm-01
+    #   key: NAME_OF_KEY
+  directValues: {}
+    # - name: ENVVAR1
+    #   value: ENVVAR1value
+    # - name: ENVVAR2
+    #   value: ENVVAR2value
 
 service:
   type: ClusterIP
