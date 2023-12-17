@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "app.cmName" . }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+data:
+  .env: |-
+    PORT: "teat"
+    MONGODB_URI: "teat"
+    MONGODB_NAME: "teat"

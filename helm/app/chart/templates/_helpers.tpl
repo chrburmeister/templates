@@ -73,3 +73,10 @@ Create name for horizontal pod autoscaler
 {{- define "app.hpaName" -}}
 {{- printf "%s-%s" (include "app.name" .) "hpa" }}
 {{- end }}
+
+{{/*
+Create name for config map
+*/}}
+{{- define "app.cmName" -}}
+{{- printf "%s-%s" (include "app.name" .) "cm" }}
+{{- end }}
