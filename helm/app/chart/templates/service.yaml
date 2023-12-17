@@ -5,11 +5,13 @@ metadata:
   labels:
     {{- include "app.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.ServiceType }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.targetPort }}
-      protocol: {{ .Values.service.protocol }}
-      name: {{ .Values.service.name }}
+    {{- range $ref := .Values.services }}
+    - port: {{ $ref.port }}
+      targetPort: {{ $ref.targetPort }}
+      protocol: {{ $ref.protocol }}
+      name: {{ $ref.name }}
+    {{- end }}
   selector:
     {{- include "app.selectorLabels" . | nindent 4 }}

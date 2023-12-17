@@ -40,9 +40,11 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name:  {{ .Values.service.name }}
-              containerPort: {{ .Values.service.targetPort }}
-              protocol:  {{ .Values.service.protocol }}
+            {{- range $ref := .Values.services }}
+            - name: {{ $ref.name }}
+              containerPort: {{ $ref.targetPort }}
+              protocol: {{ $ref.protocol }}
+            {{- end }}
           env:
             - name: RELEASE_NAME
               value: {{ .Release.Name }}
